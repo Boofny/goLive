@@ -5,25 +5,31 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 )
-//here and here trying to make types methods 
+
+//here and here trying to make types methods
 type GoLive struct{}
 
 func New()*GoLive{
 	return &GoLive{}
 }
 
+//need to make a function that takes the path http function and db connection in order to validate the db functions
 func (g *GoLive)GetStringDefault(w http.ResponseWriter, r *http.Request){
 	resp := map[string]any{
 		"name": "Hello world",
 	}
-	sendJSON(w, http.StatusAccepted, resp)
+	SendJSON(w, http.StatusAccepted, resp)
 }
-func (g *GoLive)GET(path string, passedFunction func(w http.ResponseWriter, r *http.Request)) error {
-
-	return nil
+// func (g *GoLive)GET(passedFunction func(w http.ResponseWriter, r *http.Request)) {
+//
+// }
+//
+func (g *GoLive)GET(path string, mux *http.ServeMux, handle http.HandlerFunc){
+	mux.HandleFunc(path, handle)
 }
 
 //here again making some thing like echo 
@@ -32,7 +38,7 @@ func (g *GoLive)GetJsonDefault(w http.ResponseWriter, r *http.Request){
 	code := map[string]string{
 		"code": "Hello world",
 	}
-	sendJSON(w, http.StatusOK, code)
+	SendJSON(w, http.StatusOK, code)
 }
 
 func (g *GoLive)PostJsonDefault(w http.ResponseWriter, r *http.Request){
@@ -47,11 +53,13 @@ func (g *GoLive)PostJsonDefault(w http.ResponseWriter, r *http.Request){
 		return 
 	}
 	code := map[string]any {"resp": user.Name, "resp2": user.Age}
-	sendJSON(w, http.StatusOK, code)
+	SendJSON(w, http.StatusOK, code)
 }
 
 //needed function
-func sendJSON(w http.ResponseWriter, status int, data any) {
+func SendJSON(w http.ResponseWriter, status int, data any) { 
+	//made this public change it back if you want the scope of the code 
+	//to be in this file alone not in the main
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(status)
   json.NewEncoder(w).Encode(data)
