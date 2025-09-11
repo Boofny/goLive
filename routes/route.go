@@ -18,10 +18,6 @@ func (g *GoLive)GetStringDefault(w http.ResponseWriter, r *http.Request){
 	sendJSON(w, http.StatusAccepted, "Hello")
 }
 
-func (g *GoLive)GET(path string) error {
-
-	return nil
-}
 //here again making some thing like echo 
 //have and idea make two things and http template for fast project starting and a framework like echo 
 func GetJsonDefault(w http.ResponseWriter, r *http.Request){
