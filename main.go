@@ -7,12 +7,10 @@ import (
 
 func main() {
 	e := routes.New()
-	e.GetStringDefault()
-
 	
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /test", routes.GetJsonDefault)
-	mux.HandleFunc("POST /pong", routes.PostJsonDefault)
+	mux.HandleFunc("GET /test", e.GetJsonDefault)
+	mux.HandleFunc("POST /pong", e.PostJsonDefault)
 
 	routes.StartServer(":8080", mux)
 }

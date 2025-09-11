@@ -10,24 +10,32 @@ import (
 )
 //here and here trying to make types methods 
 type GoLive struct{}
+
 func New()*GoLive{
 	return &GoLive{}
 }
 
 func (g *GoLive)GetStringDefault(w http.ResponseWriter, r *http.Request){
-	sendJSON(w, http.StatusAccepted, "Hello")
+	resp := map[string]any{
+		"name": "Hello world",
+	}
+	sendJSON(w, http.StatusAccepted, resp)
+}
+func (g *GoLive)GET(path string, passedFunction func(w http.ResponseWriter, r *http.Request)) error {
+
+	return nil
 }
 
 //here again making some thing like echo 
 //have and idea make two things and http template for fast project starting and a framework like echo 
-func GetJsonDefault(w http.ResponseWriter, r *http.Request){
+func (g *GoLive)GetJsonDefault(w http.ResponseWriter, r *http.Request){
 	code := map[string]string{
 		"code": "Hello world",
 	}
 	sendJSON(w, http.StatusOK, code)
 }
 
-func PostJsonDefault(w http.ResponseWriter, r *http.Request){
+func (g *GoLive)PostJsonDefault(w http.ResponseWriter, r *http.Request){
 	type User struct{
 		Name string `json:"name"`
 		Age int `json:"age"`
