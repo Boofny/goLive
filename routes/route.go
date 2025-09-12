@@ -21,6 +21,7 @@ func New()*GoLive{
 func (g *GoLive)MuxHandle()http.ServeMux{
 	return *http.NewServeMux()
 }
+//look into weather this functiuns is needed
 
 //need to make a function that takes the path http function and db connection in order to validate the db functions
 // func (g *GoLive)GET(passedFunction func(w http.ResponseWriter, r *http.Request)) {

@@ -10,8 +10,7 @@ import (
 func main() {
 	e := routes.New()
 
-	server := e.MuxHandle()
-
+	server := e.MuxHandle() //i wanna see if i really need this so i dont have to pass server to the GET and POST functions
 	e.GET("/pers", &server, func(w http.ResponseWriter, r *http.Request) error{
 		resp := map[string]any{
 			"nerd": "nananana",
