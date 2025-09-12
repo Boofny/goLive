@@ -3,25 +3,38 @@ package main
 import (
 	"GoLive/routes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
 func main() {
 	e := routes.New()
 
-	mux := http.NewServeMux()
+	server := e.MuxHandle()
 
-	mux.HandleFunc("GET /ping", e.GetJsonDefault)
-	mux.HandleFunc("POST /pong", e.PostJsonDefault)
-	mux.HandleFunc("GET /nerd", func(w http.ResponseWriter, r *http.Request){
+	e.GET("/pers", &server, func(w http.ResponseWriter, r *http.Request) error{
 		resp := map[string]any{
 			"nerd": "nananana",
 		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusAccepted)
-		json.NewEncoder(w).Encode(resp)
+		return e.SendJSON(w, http.StatusOK, resp)
 	})
 
-	routes.StartServer(":8080", mux)
+	e.POST("/ping", &server, func(w http.ResponseWriter, r *http.Request)error{
+		type User struct{
+			Name string `json:"name"`
+			Age int `json:"age"`
+		}
+		var user User
+		err := json.NewDecoder(r.Body).Decode(&user)
+		if err != nil {
+			http.Error(w, "Error in post", http.StatusBadRequest)
+			return err
+		}
+		ret := fmt.Sprintf("Hello %s", user.Name)
+		code := map[string]any {"resp": ret, "resp2": user.Age}
+		return e.SendJSON(w, http.StatusOK, code)
+	})
+
+	e.StartServer(":8080", &server)
 }
 

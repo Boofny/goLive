@@ -1,11 +1,11 @@
 package logging
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 )
-
 type wrappedWrite struct{
 	http.ResponseWriter
 	satusCode int
@@ -25,6 +25,7 @@ func Logging(next http.Handler)http.Handler  {
 			satusCode: http.StatusOK,
 		}
 		next.ServeHTTP(wrapped, r)
+		fmt.Print("\033[32m >>> \033[0m")
 		log.Println(wrapped.satusCode, r.Method, r.URL.Path, time.Since(start))
 	})
 }
