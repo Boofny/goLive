@@ -1,15 +1,18 @@
-package goLive 
+package goLive
 
 import (
-	"github.com/Boofny/goLive/logging"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/Boofny/goLive/logging"
 )
 
 //here and here trying to make types methods
+
+
 type HandleFunc func(w http.ResponseWriter, r *http.Request)error //custom handler defined for error handling
 
 type GoLive struct{
@@ -22,11 +25,12 @@ func New()*GoLive{
 // func (g *GoLive)MuxHandle()*http.ServeMux{
 // 	return http.NewServeMux()
 // }
+
 type Context struct{
-	handle *HandleFunc
+
 }
-func (c *Context)JSON()error{
-	return nil
+func Tools()*Context{
+	return &Context{}
 }
 
 func (g *GoLive) GET(path string, mux *http.ServeMux, handle HandleFunc) {
@@ -86,15 +90,26 @@ func (g *GoLive)PUT(path string, mux *http.ServeMux, handle HandleFunc){
   })
 }
 
-//needed function
-func (g *GoLive)SendJSON(w http.ResponseWriter, status int, data any)error { 
-	//made this public change it back if you want the scope of the code 
-	//to be in this file alone not in the main
-  w.Header().Set("Content-Type", "application/json")
-  w.WriteHeader(status)
-	return json.NewEncoder(w).Encode(data)
+// func (g *GoLive)SendJSON(w http.ResponseWriter, status int, data any)error { 
+// 	//made this public change it back if you want the scope of the code 
+// 	//to be in this file alone not in the main
+//   w.Header().Set("Content-Type", "application/json")
+//   w.WriteHeader(status)
+// 	return json.NewEncoder(w).Encode(data)
+// }
+
+func (c *Context) JSON(w http.ResponseWriter, status int, data any) error {
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(status)
+    return json.NewEncoder(w).Encode(data)
 }
 
+func (c *Context) STRING(w http.ResponseWriter, status int, data string)error{
+    w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(status)
+	_, err := w.Write([]byte(data))
+	return err 
+}
 
 //needed function
 func (g *GoLive)StartServer(port string, mux *http.ServeMux) {
