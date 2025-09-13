@@ -1,7 +1,7 @@
 package goLive 
 
 import (
-	"github.com/Boofny/GoLive/logging"
+	"github.com/Boofny/goLive/logging"
 	"encoding/json"
 	"errors"
 	"fmt"
