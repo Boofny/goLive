@@ -118,15 +118,18 @@ func (g *GoLive)StartServer(port string, mux *http.ServeMux) {
 		Handler: logging.Logging(mux), //this is where the output for Requests are
 	}
 
-	fmt.Println( ` 
+	icon :=  `
  ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
 ██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
 ██║  ███╗██║   ██║██║     ██║██║   ██║█████╗  ██║
 ██║   ██║██║   ██║██║     ██║╚██╗ ██╔╝██╔══╝  ╚═╝
 ╚██████╔╝╚██████╔╝███████╗██║ ╚████╔╝ ███████╗██╗
  ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝  ╚══════╝╚═╝ 
-	`)
-  fmt.Println("\033[1;34mServer started successfully on port" +  server.Addr +"!\033[0m")
+	`    
+	green := "\033[34m"
+	fmt.Println(green, icon)
+	fmt.Print("\033[32m >>> \033[0m")
+  fmt.Println("Server started successfully on port" +  server.Addr)
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
