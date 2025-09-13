@@ -25,7 +25,11 @@ func Logging(next http.Handler)http.Handler  {
 			satusCode: http.StatusOK,
 		}
 		next.ServeHTTP(wrapped, r)
-		fmt.Print("\033[32m >>> \033[0m")
+		if wrapped.satusCode != 200{
+			fmt.Print("\033[31m >>> \033[0m")
+		}else{
+			fmt.Print("\033[32m >>> \033[0m")
+		}
 		log.Println(wrapped.satusCode, r.Method, r.URL.Path, time.Since(start))
 	})
 }

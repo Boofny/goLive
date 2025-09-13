@@ -18,8 +18,15 @@ type GoLive struct{
 func New()*GoLive{ 
 	return &GoLive{}
 }
-func (g *GoLive)MuxHandle()http.ServeMux{
-	return *http.NewServeMux()
+//dont find this to needed
+// func (g *GoLive)MuxHandle()*http.ServeMux{
+// 	return http.NewServeMux()
+// }
+type Context struct{
+	handle *HandleFunc
+}
+func (c *Context)Cont()error{
+	return nil
 }
 //look into weather this functiuns is needed
 
@@ -60,27 +67,34 @@ func (g *GoLive)POST(path string, mux *http.ServeMux, handle HandleFunc){
 		}
   })
 }
-// func (g *GoLive)GetJsonDefault(w http.ResponseWriter, r *http.Request){
-// 	code := map[string]string{
-// 		"code": "Hello world",
-// 	}
-// 	SendJSON(w, http.StatusOK, code)
-// }
+func (g *GoLive)DELETE(path string, mux *http.ServeMux, handle HandleFunc){
+  mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodDelete{
+      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+      return
+    }
 
-// func (g *GoLive)PostJsonDefault(w http.ResponseWriter, r *http.Request){
-// 	type User struct{
-// 		Name string `json:"name"`
-// 		Age int `json:"age"`
-// 	}
-// 	var user User
-// 	err := json.NewDecoder(r.Body).Decode(&user)
-// 	if err != nil {
-// 		http.Error(w, "Error", http.StatusBadRequest)
-// 		return 
-// 	}
-// 	code := map[string]any {"resp": user.Name, "resp2": user.Age}
-// 	SendJSON(w, http.StatusOK, code)
-// }
+		err := handle(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+  })
+}
+func (g *GoLive)PUT(path string, mux *http.ServeMux, handle HandleFunc){
+  mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPut{
+      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+      return
+    }
+
+		err := handle(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+  })
+}
 
 //needed function
 func (g *GoLive)SendJSON(w http.ResponseWriter, status int, data any)error { 
@@ -94,16 +108,20 @@ func (g *GoLive)SendJSON(w http.ResponseWriter, status int, data any)error {
 
 //needed function
 func (g *GoLive)StartServer(port string, mux *http.ServeMux) {
-	//for when needed output
-  fmt.Println("\033[31mThis is red text.\033[0m")
-	fmt.Println("\033[32mThis is green text.\033[0m")
-	fmt.Println("\033[1;34mThis is bold blue text.\033[0m")
 	server := &http.Server{
 		Addr:    port,
 		Handler: logging.Logging(mux), //this is where the output for Requests are
 	}
 
-	fmt.Println("Server on port" + port)
+	fmt.Println( ` 
+ ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
+██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
+██║  ███╗██║   ██║██║     ██║██║   ██║█████╗  ██║
+██║   ██║██║   ██║██║     ██║╚██╗ ██╔╝██╔══╝  ╚═╝
+╚██████╔╝╚██████╔╝███████╗██║ ╚████╔╝ ███████╗██╗
+ ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝  ╚══════╝╚═╝ 
+	`)
+  fmt.Println("\033[1;34mServer started successfully on port" +  server.Addr +"!\033[0m")
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {

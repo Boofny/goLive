@@ -5,20 +5,39 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func main() {
 	e := routes.New()
 
-	server := e.MuxHandle() //i wanna see if i really need this so i dont have to pass server to the GET and POST functions
-	e.GET("/pers", &server, func(w http.ResponseWriter, r *http.Request) error{
+	server := http.NewServeMux()
+
+	e.GET("/pers", server, func(w http.ResponseWriter, r *http.Request) error{
 		resp := map[string]any{
 			"nerd": "nananana",
+		}
+		return e.SendJSON(w, http.StatusOK, resp) //use StatusOK for code 200 will need for logging
+	})
+
+	e.GET("/test", server, func(w http.ResponseWriter, r *http.Request)  error{
+		query := r.URL.Query()
+		resp := map[string]any{
+			"id": query.Get("id"),
+			"p": query.Get("p"),
+			"page": query.Get("page"),
+		}
+		idConv, err := strconv.Atoi(resp["id"].(string))
+		if err != nil {
+			return err
+		}
+		if idConv != 1323{
+			return e.SendJSON(w, http.StatusBadRequest, "Error in /test")
 		}
 		return e.SendJSON(w, http.StatusOK, resp)
 	})
 
-	e.POST("/ping", &server, func(w http.ResponseWriter, r *http.Request)error{
+	e.POST("/ping", server, func(w http.ResponseWriter, r *http.Request)error{
 		type User struct{
 			Name string `json:"name"`
 			Age int `json:"age"`
@@ -34,6 +53,6 @@ func main() {
 		return e.SendJSON(w, http.StatusOK, code)
 	})
 
-	e.StartServer(":8080", &server)
+	e.StartServer(":8080", server)
 }
 
