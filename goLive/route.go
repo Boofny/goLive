@@ -1,4 +1,4 @@
-package golive 
+package goLive 
 
 import (
 	"github.com/Boofny/GoLive/logging"
