@@ -1,7 +1,7 @@
-package routes
+package golive 
 
 import (
-	"GoLive/logging"
+	"github.com/Boofny/GoLive/logging"
 	"encoding/json"
 	"errors"
 	"fmt"
