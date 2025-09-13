@@ -25,19 +25,9 @@ func New()*GoLive{
 type Context struct{
 	handle *HandleFunc
 }
-func (c *Context)Cont()error{
+func (c *Context)JSON()error{
 	return nil
 }
-//look into weather this functiuns is needed
-
-//need to make a function that takes the path http function and db connection in order to validate the db functions
-// func (g *GoLive)GET(passedFunction func(w http.ResponseWriter, r *http.Request)) {
-//
-// }
-
-// func (g *GoLive)GET(path string, handle http.HandlerFunc){
-// 	http.HandleFunc(path, handle)
-// }
 
 func (g *GoLive) GET(path string, mux *http.ServeMux, handle HandleFunc) {
   mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {

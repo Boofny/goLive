@@ -13,11 +13,11 @@ func main() {
 
 	server := http.NewServeMux()
 
-	e.GET("/pers", server, func(w http.ResponseWriter, r *http.Request) error{
+	e.GET("/romdd", server, func(w http.ResponseWriter, r *http.Request) error {
 		resp := map[string]any{
-			"nerd": "nananana",
+			"name": "nanananana",
 		}
-		return e.SendJSON(w, http.StatusOK, resp) //use StatusOK for code 200 will need for logging
+		return e.SendJSON(w, http.StatusOK, resp)
 	})
 
 	e.GET("/test", server, func(w http.ResponseWriter, r *http.Request)  error{
