@@ -23,8 +23,8 @@ func main() {
 }
 ```
 
-##Clone
-Get started by cloning this repo
+## Clone
+### Get started by cloning this repo
 ```bash
 git clone https://github.com/Boofny/golive.git
 ```
