@@ -11,19 +11,16 @@ import (
 
 func main() {
 	e := goLive.New()
-	c := goLive.Tools()
 
-	mid := http.NewServeMux()
-
-	e.GET("/hello", mid, func(w http.ResponseWriter, r *http.Request) error {
-		return c.STRING(w, 200, "Hello world")
+	e.GET("/hello", func(c *goLive.Context)error{
+		return c.STRING(http.StatusOK, "Hello world") //send out your data
 	})
 
-	e.StartServer(":8080", mid)
+	e.StartServer("8080")
 }
 ```
 
-## Go Get
+## Installation 
 ### Get started by downloading this module
 ```bash
 go get github.com/Boofny/goLive@latest
