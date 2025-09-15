@@ -25,3 +25,9 @@ func main() {
 ```bash
 go get github.com/Boofny/goLive@latest
 ```
+
+## Try it out!
+### In the (unix)terminal try.
+```bash
+curl -X GET localhost:8080/hello
+```
