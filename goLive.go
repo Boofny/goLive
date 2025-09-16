@@ -146,9 +146,9 @@ func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
 	// redH:= "\033[41m"
 	// greenH := "\033[42m"
 	fmt.Println(blue, icon)
-	fmt.Print("\033[34m ## \033[0m")
-  fmt.Print("Server started successfully on port " +  yellow + server.Addr + reset)
-	fmt.Println("\033[34m ## \033[0m")
+	fmt.Print("\033[34m >>> \033[0m")
+	fmt.Print("Server started successfully on port:" +  yellow + port + reset)
+	fmt.Println("\033[34m <<< \033[0m")
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
