@@ -27,7 +27,11 @@ go get github.com/Boofny/goLive@latest
 ```
 
 ## Try it out!
-### In the (unix)terminal try.
+### In the terminal try.
 ```bash
 curl -X GET localhost:8080/hello
+```
+### Or in your browser 
+```bash
+http://localhost:8080/hello
 ```
