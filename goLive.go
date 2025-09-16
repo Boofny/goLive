@@ -25,18 +25,6 @@ func New()*GoLive{
 		Mux: http.NewServeMux(),
 	}
 }
-//dont find this to needed
-// func (g *GoLive)MuxHandle()*http.ServeMux{
-// 	return http.NewServeMux()
-// }
-
-// type Context struct{
-//
-// }
-
-// func Tools()*Context{
-// 	return &Context{}
-// }
 
 func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) {
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
@@ -56,8 +44,8 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 		}
   })
 }
-func (g *GoLive)POST(path string, mux *http.ServeMux, handle FunctionHandler){
-  mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
       return
@@ -74,8 +62,8 @@ func (g *GoLive)POST(path string, mux *http.ServeMux, handle FunctionHandler){
 		}
   })
 }
-func (g *GoLive)DELETE(path string, mux *http.ServeMux, handle FunctionHandler){
-  mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodDelete{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
       return
@@ -92,8 +80,8 @@ func (g *GoLive)DELETE(path string, mux *http.ServeMux, handle FunctionHandler){
 		}
   })
 }
-func (g *GoLive)PUT(path string, mux *http.ServeMux, handle FunctionHandler){
-  mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPut{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
       return
@@ -152,12 +140,15 @@ func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
 ╚██████╔╝╚██████╔╝███████╗██║ ╚████╔╝ ███████╗██╗
  ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝  ╚══════╝╚═╝ 
 	`    
-	green := "\033[34m"
+	blue := "\033[34m"
+	yellow := "\033[33m"
+	reset := "\033[30m"
 	// redH:= "\033[41m"
 	// greenH := "\033[42m"
-	fmt.Println(green, icon)
-	fmt.Print("\033[32m >>> \033[0m")
-  fmt.Println("Server started successfully on port" +  server.Addr)
+	fmt.Println(blue, icon)
+	fmt.Print("\033[34m ## \033[0m")
+  fmt.Print("Server started successfully on port " +  yellow + server.Addr + reset)
+	fmt.Println("\033[34m ## \033[0m")
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
