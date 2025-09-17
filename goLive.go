@@ -128,7 +128,7 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
 
 func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
 	server := &http.Server{
-		Addr:    ":" + port,
+		Addr:    port,
 		Handler: logging.Logging(g.Mux), //this is where the output for Requests are
 	}
 
@@ -147,7 +147,7 @@ func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
 	// greenH := "\033[42m"
 	fmt.Println(blue, icon)
 	fmt.Print("\033[34m >>> \033[0m")
-	fmt.Print("Server started successfully on port:" +  yellow + port + reset)
+	fmt.Print("Server started successfully on port" +  yellow + port + reset)
 	fmt.Println("\033[34m <<< \033[0m")
 
 	err := server.ListenAndServe()
