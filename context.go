@@ -32,4 +32,16 @@ func (c *Context) ERROR(/*w http.ResponseWriter,*/ status int, errorMsg string) 
 	return nil
 }
 
+func (c *Context) REDIRECT(/*w http.ResponseWriter,*/ status int, redirectUrl string)error{
+	http.Redirect(c.Writer, c.Request, redirectUrl, status)
+  c.Writer.Header().Set("Content-Type", "text/plain")
+	c.Writer.WriteHeader(status)
+	_, err := c.Writer.Write([]byte("Good"))
+	if err != nil {
+		return err
+	}
+	return err 
+}
+
+
 
