@@ -33,9 +33,10 @@ func (c *Context) ERROR(/*w http.ResponseWriter,*/ status int, errorMsg string) 
 }
 
 func (c *Context) REDIRECT(/*w http.ResponseWriter,*/ status int, redirectUrl string)error{
+	//feel this could be done better
 	http.Redirect(c.Writer, c.Request, redirectUrl, status)
-	err := c.Writer.WriteHeader(status)
-	return err
+	// c.Writer.WriteHeader(200)
+	return nil
 }
 
 

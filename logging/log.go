@@ -11,10 +11,10 @@ type wrappedWrite struct{
 	satusCode int
 }
 
-func (w *wrappedWrite) WriteHeader(statusCode int){
+func (w *wrappedWrite)WriteHeader(statusCode int){ //need to look into this 
 	w.ResponseWriter.WriteHeader(statusCode)
 	w.satusCode = statusCode
-}
+}//is this recursive??????
 
 func Logging(next http.Handler)http.Handler  {
 	redH:= "\033[31m"
@@ -28,12 +28,17 @@ func Logging(next http.Handler)http.Handler  {
 			satusCode: http.StatusOK,
 		}
 		next.ServeHTTP(wrapped, r)
-		if wrapped.satusCode != 200 && wrapped.satusCode != 302{ //dont know if this is good
-			fmt.Print("\033[31m >>> \033[0m")
+		//wanna make a better way to handle codes
+		if wrapped.satusCode != 200 { //dont know if this is good
+			fmt.Print("\033[31m >>> \033[0m") //error
 			log.Println(redH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start))
-		}else{
-			fmt.Print("\033[32m >>> \033[0m")
-			log.Println(greenH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start))
+		}else if wrapped.satusCode != 404{
+			fmt.Print("\033[32m >>> \033[0m") //good
+			log.Println(greenH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start)) 
 		}
 	})
 }
+
+
+
+
