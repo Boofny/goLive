@@ -15,6 +15,9 @@ import (
 // type FunctionHandler func(w http.ResponseWriter, r *http.Request)error //custom handler defined for error handling
 // type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
+var (
+	ErrInvalidRedirectCode    = errors.New("invalid redirect status code")
+)
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
 type GoLive struct{
 	Mux *http.ServeMux
@@ -27,6 +30,9 @@ func New()*GoLive{
 }
 
 func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) {
+	if path == "/favicon.ico" { //just ignore this will prob redirect in future
+  	return// may need to add this to the others
+	}
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -149,6 +155,7 @@ func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
 	fmt.Print("\033[34m >>> \033[0m")
 	fmt.Print("Server started successfully on port" +  yellow + port + reset)
 	fmt.Println("\033[34m <<< \033[0m")
+	fmt.Println("--------------------------------------------------")
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {

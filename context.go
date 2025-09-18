@@ -22,22 +22,34 @@ func (c *Context) STRING(/*w http.ResponseWriter,*/ status int, data string)erro
 	_, err := c.Writer.Write([]byte(data))
 	return err 
 }
+//check these fucntions aswell
 
 func (c *Context) ERROR(/*w http.ResponseWriter,*/ status int, errorMsg string) error {
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte(errorMsg))
-	if err != nil { //idk 
-		return err
+	return err
+}
+
+// func (c *Context) REDIRECT(status int, redirectUrl string)error{
+// 	//feel this could be done better
+// 	http.Redirect(c.Writer, c.Request, redirectUrl, status)
+// 	// c.Writer.WriteHeader(200)
+// 	return nil
+// }
+//
+func (c *Context) REDIRECT(status int, redirectUrl string) error {
+	if status < 300 || status > 308 {
+		return ErrInvalidRedirectCode
 	}
-	return nil
-}
-
-func (c *Context) REDIRECT(/*w http.ResponseWriter,*/ status int, redirectUrl string)error{
-	//feel this could be done better
 	http.Redirect(c.Writer, c.Request, redirectUrl, status)
-	// c.Writer.WriteHeader(200)
+	c.Writer.WriteHeader(status)
 	return nil
 }
+// func (c *Context) Error(err error) {
+// 	c.echo.HTTPErrorHandler(err, c)
+// }
 
-
+// func (c *context) Echo() *Echo {
+// 	return c.echo
+// }
 
