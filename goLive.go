@@ -10,29 +10,29 @@ import (
 	"github.com/Boofny/goLive/logging"
 )
 
-//here and here trying to make types methods
-
-// type FunctionHandler func(w http.ResponseWriter, r *http.Request)error //custom handler defined for error handling
-// type FunctionHandler func(c *Context)error //custom handler defined for error handling
-
 var (
-	ErrInvalidRedirectCode = errors.New("invalid redirect status code")
+	ErrInvalidRedirectCode = errors.New("invalid redirect status code") 
+	//will add more err code in future as this thing grows
 )
+
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
+//struct that has a mux handler property
 type GoLive struct{
 	Mux *http.ServeMux
 }
 
+//Method for starting the goLive session
 func New()*GoLive{ 
 	return &GoLive{
 		Mux: http.NewServeMux(),
 	}
 }
 
-func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) {
+//wanna keep this comment just to know what the custom method represents
+func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) { //get request wrapper for simple usage
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
-  	return// may need to add this to the others
+  	return
 	}
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
@@ -51,7 +51,10 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 		}
   })
 }
-func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //put request wrapper
+	if path == "/favicon.ico" { //just ignore this will prob redirect in future
+  	return
+	}
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -69,7 +72,10 @@ func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 		}
   })
 }
-func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //DELETE request wrapper
+	if path == "/favicon.ico" { //just ignore this will prob redirect in future
+  	return// may need to add this to the others
+	}
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodDelete{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -87,7 +93,10 @@ func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandl
 		}
   })
 }
-func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){
+func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //PUT request wrapper
+	if path == "/favicon.ico" { //just ignore this will prob redirect in future
+  	return// may need to add this to the others
+	}
   g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPut{
       http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -106,34 +115,12 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
-// func (g *GoLive)SendJSON(w http.ResponseWriter, status int, data any)error { 
-// 	//made this public change it back if you want the scope of the code 
-// 	//to be in this file alone not in the main
-//   w.Header().Set("Content-Type", "application/json")
-//   w.WriteHeader(status)
-// 	return json.NewEncoder(w).Encode(data)
-// }
-//
-// func (c *Context) JSON(w http.ResponseWriter, status int, data any) error {
-//     w.Header().Set("Content-Type", "application/json")
-//     w.WriteHeader(status)
-//     return json.NewEncoder(w).Encode(data)
-// }
-//
-// func (c *Context) STRING(w http.ResponseWriter, status int, data string)error{
-//     w.Header().Set("Content-Type", "text/plain")
-// 	w.WriteHeader(status)
-// 	_, err := w.Write([]byte(data))
-// 	return err 
-// }
-
-//needed function
-
 // type GoLive struct{
 // 	Mux *http.ServeMux
 // }
 
-func (g *GoLive)StartServer(port string, /*mux *http.ServeMux*/) {
+//this function is what starts the server should be put at the end of the main file
+func (g *GoLive)StartServer(port string) {
 	server := &http.Server{
 		Addr:    port,
 		Handler: logging.Logging(g.Mux), //this is where the output for Requests are
