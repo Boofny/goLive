@@ -16,9 +16,10 @@ import (
 // type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
 var (
-	ErrInvalidRedirectCode    = errors.New("invalid redirect status code")
+	ErrInvalidRedirectCode = errors.New("invalid redirect status code")
 )
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
+
 type GoLive struct{
 	Mux *http.ServeMux
 }
