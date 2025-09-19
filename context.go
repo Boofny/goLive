@@ -25,6 +25,11 @@ func (c *Context) SENDJSON(status int, data any) error {
 	return json.NewEncoder(c.Writer).Encode(data)
 }
 
+func (c *Context)VALID(status int)error{
+	c.Writer.WriteHeader(status)
+	return nil
+}
+
 //sends a simple text only string to the client good for fast tests 
 func (c *Context) STRING(status int, data string)error{
   c.Writer.Header().Set("Content-Type", "text/plain")
@@ -64,5 +69,17 @@ func (c *Context)READJSON(data any)error{
 	defer c.Request.Body.Close()
 	return json.Unmarshal(body, data)
 }
+
+func (c *Context)PARAM(data string)string{ //for now this works with only string
+	foundData := c.Request.PathValue(data)
+	return foundData
+}
+
+func (c *Context)QUERYGET(data string)string{
+	foundQuery := c.Request.URL.Query().Get(data)
+	return foundQuery
+}
+
+
 
 

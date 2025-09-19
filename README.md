@@ -1,5 +1,6 @@
 ## GoLive!
 ### Fast web frame work for golang built on std lib http
+#### Need Golang 1.25.1+
 
 ```go
 package main

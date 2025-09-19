@@ -10,6 +10,13 @@ import (
 	"github.com/Boofny/goLive/logging"
 )
 
+const (
+	GET = http.MethodGet
+	POST = http.MethodPost
+	PUT = http.MethodPut
+	DELETE = http.MethodDelete
+)
+
 var (
 	ErrInvalidRedirectCode = errors.New("invalid redirect status code") 
 	//will add more err code in future as this thing grows
@@ -34,16 +41,18 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return
 	}
-  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodGet {
-      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-      return
-    }
+	fullGetPath := fmt.Sprintf("GET %s", path)
+  g.Mux.HandleFunc(fullGetPath, func(w http.ResponseWriter, r *http.Request) {
+    // if r.Method != http.MethodGet {
+    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    //   return
+    // }
 
 		ctx := &Context{
 			Writer: w,
 			Request: r,
 		}
+
 		err := handle(ctx)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -55,11 +64,12 @@ func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return
 	}
-  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPost{
-      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-      return
-    }
+	fullPostPath:= fmt.Sprintf("POST %s", path)
+  g.Mux.HandleFunc(fullPostPath, func(w http.ResponseWriter, r *http.Request) {
+    // if r.Method != http.MethodPost{
+    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    //   return
+    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -76,11 +86,12 @@ func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandl
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return// may need to add this to the others
 	}
-  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodDelete{
-      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-      return
-    }
+	fullDeletePath := fmt.Sprintf("DELETE %s", path)
+  g.Mux.HandleFunc(fullDeletePath, func(w http.ResponseWriter, r *http.Request) {
+    // if r.Method != http.MethodDelete{
+    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    //   return
+    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -97,11 +108,12 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return// may need to add this to the others
 	}
-  g.Mux.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPut{
-      http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-      return
-    }
+	fullPutPath := fmt.Sprintf("PUT %s", path)
+  g.Mux.HandleFunc(fullPutPath, func(w http.ResponseWriter, r *http.Request) {
+    // if r.Method != http.MethodPut{
+    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    //   return
+    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -120,7 +132,7 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
 // }
 
 //this function is what starts the server should be put at the end of the main file
-func (g *GoLive)StartServer(port string) {
+func (g *GoLive)StartServer(port string){
 	server := &http.Server{
 		Addr:    port,
 		Handler: logging.Logging(g.Mux), //this is where the output for Requests are
