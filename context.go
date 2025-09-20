@@ -26,12 +26,17 @@ func (c *Context) SENDJSON(status int, data any) error {
 }
 
 func (c *Context)VALID(status int)error{
+	if status < 200 || status > 399{
+		return ErrInvalidRedirectCode
+	}
+	c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	c.Writer.WriteHeader(status)
-	return nil
+	_, err := c.Writer.Write([]byte("Valid"))
+	return err
 }
 
 //sends a simple text only string to the client good for fast tests 
-func (c *Context) STRING(status int, data string)error{
+func (c *Context) SENDSTRING(status int, data string)error{
   c.Writer.Header().Set("Content-Type", "text/plain")
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte(data))
@@ -70,7 +75,7 @@ func (c *Context)READJSON(data any)error{
 	return json.Unmarshal(body, data)
 }
 
-func (c *Context)PARAM(data string)string{ //for now this works with only string
+func (c *Context)PATHVAL(data string)string{ //for now this works with only string
 	foundData := c.Request.PathValue(data)
 	return foundData
 }
