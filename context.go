@@ -19,13 +19,24 @@ type Context struct{
 }
 
 //when a request needs json to be send this function is used taking a http status code and any for of data mainly maps
-func (c *Context) SENDJSON(status int, data any) error {
+func (c *Context) SendJson(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
 	return json.NewEncoder(c.Writer).Encode(data)
 }
 
-func (c *Context)VALID(status int)error{
+//used for when the http method sends a json to the server and need to extract json datad
+//dev must pass the data by address when using in order to bind to the models that are defined
+func (c *Context)ReadJson(data any)error{
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		return err
+	}
+	defer c.Request.Body.Close()
+	return json.Unmarshal(body, data)
+}
+
+func (c *Context)Valid(status int)error{
 	if status < 200 || status > 399{
 		return ErrInvalidRedirectCode
 	}
@@ -36,7 +47,7 @@ func (c *Context)VALID(status int)error{
 }
 
 //sends a simple text only string to the client good for fast tests 
-func (c *Context) SENDSTRING(status int, data string)error{
+func (c *Context) SendString(status int, data string)error{
   c.Writer.Header().Set("Content-Type", "text/plain")
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte(data))
@@ -44,7 +55,7 @@ func (c *Context) SENDSTRING(status int, data string)error{
 }
 
 //sends error into the request for more custom and simple error handling in the http methods
-func (c *Context) ERROR(status int, errorMsg string) error {
+func (c *Context) Error(status int, errorMsg string) error {
 	if status < 400 || status > 599{
 		return ErrInvalidRedirectCode
 	}
@@ -55,7 +66,7 @@ func (c *Context) ERROR(status int, errorMsg string) error {
 }
 
 //redirects the clients request to the needed url or other path
-func (c *Context) REDIRECT(status int, redirectUrl string) error {
+func (c *Context) Redirect(status int, redirectUrl string) error {
 	if status < 300 || status > 308 {
 		return ErrInvalidRedirectCode
 	}
@@ -64,23 +75,12 @@ func (c *Context) REDIRECT(status int, redirectUrl string) error {
 	return nil
 }
 
-//used for when the http method sends a json to the server and need to extract json datad
-//dev must pass the data by address when using in order to bind to the models that are defined
-func (c *Context)READJSON(data any)error{
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
-	defer c.Request.Body.Close()
-	return json.Unmarshal(body, data)
-}
-
-func (c *Context)PATHVAL(data string)string{ //for now this works with only string
+func (c *Context)Param(data string)string{ //for now this works with only string
 	foundData := c.Request.PathValue(data)
 	return foundData
 }
 
-func (c *Context)QUERYGET(data string)string{
+func (c *Context)QueryGet(data string)string{
 	foundQuery := c.Request.URL.Query().Get(data)
 	return foundQuery
 }
