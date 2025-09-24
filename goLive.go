@@ -36,6 +36,11 @@ func New()*GoLive{
 	}
 }
 
+func (g *GoLive)Use(c *Context){  //i think pointer will be needed as i want global middeware
+	//will need to take the contect function somehow to access the this will need more things like maybe pass a specific port for middeware
+	// c.Writer.Header().Set("Access-Control-Allow-Origin", "*") pass a port here maybe
+	// c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
 //wanna keep this comment just to know what the custom method represents
 func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) { //get request wrapper for simple usage
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future

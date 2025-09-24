@@ -19,7 +19,7 @@ type Context struct{
 }
 
 //when a request needs json to be send this function is used taking a http status code and any for of data mainly maps
-func (c *Context) SendJson(status int, data any) error {
+func (c *Context) SendJSON(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
 	return json.NewEncoder(c.Writer).Encode(data)
@@ -27,7 +27,7 @@ func (c *Context) SendJson(status int, data any) error {
 
 //used for when the http method sends a json to the server and need to extract json datad
 //dev must pass the data by address when using in order to bind to the models that are defined
-func (c *Context)ReadJson(data any)error{
+func (c *Context)ReadJSON(data any)error{
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (c *Context)Valid(status int)error{
 }
 
 //sends a simple text only string to the client good for fast tests 
-func (c *Context) SendString(status int, data string)error{
+func (c *Context) SendSTRING(status int, data string)error{
   c.Writer.Header().Set("Content-Type", "text/plain")
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte(data))
