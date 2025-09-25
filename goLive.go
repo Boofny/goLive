@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Boofny/goLive/middeware"
+	"github.com/Boofny/goLive/middleware"
 )
 
 const (
@@ -36,6 +36,9 @@ func New()*GoLive{
 	}
 }
 
+//Use will have to take a paramiter of middeware.CORS() and that should return something http i think
+//also will need to add a custom CORS config kida like e.Use(middeware.CustomCORS(http://exampleurl.com))
+//prob for dev e.Use(middeware.CORS()) will just allow any origin for any request
 func (g *GoLive)Use(port string){  //i think pointer will be needed as i want global middeware
 	//will need to take the contect function somehow to access the this will need more things like maybe pass a specific port for middeware
 	// c.Writer.Header().Set("Access-Control-Allow-Origin", "*") pass a port here maybe
@@ -140,7 +143,7 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
 func (g *GoLive)StartServer(port string){
 	server := &http.Server{
 		Addr:    port,
-		Handler: logging.Logging(g.Mux), //this is where the output for Requests are
+		Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
 	icon :=  `
