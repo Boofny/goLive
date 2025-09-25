@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Boofny/goLive/logging"
+	"github.com/Boofny/goLive/middeware"
 )
 
 const (
@@ -36,7 +36,7 @@ func New()*GoLive{
 	}
 }
 
-func (g *GoLive)Use(c *Context){  //i think pointer will be needed as i want global middeware
+func (g *GoLive)Use(port string){  //i think pointer will be needed as i want global middeware
 	//will need to take the contect function somehow to access the this will need more things like maybe pass a specific port for middeware
 	// c.Writer.Header().Set("Access-Control-Allow-Origin", "*") pass a port here maybe
 	// c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
