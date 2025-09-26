@@ -14,10 +14,10 @@ func main() {
 	e := goLive.New()
 
 	e.GET("/hello", func(c *goLive.Context)error{
-		return c.STRING(http.StatusOK, "Hello world") //send out your data
+		return c.SendSTRING(http.StatusOK, "Hello world") //send out your data
 	})
 
-	e.StartServer("8080")
+	e.StartServer(":8080")
 }
 ```
 

@@ -16,7 +16,7 @@ func main() {
 		resp := map[string]string{
 			"Name": id,
 		}
-		return c.SendJson(http.StatusOK, resp)
+		return c.SendJSON(http.StatusOK, resp)
 	})
 
 	e.GET("/redi/{name}", func(c *goLive.Context) error {
@@ -40,12 +40,12 @@ func main() {
 		}
 
 		var data User
-		err := c.ReadJson(&data)
+		err := c.ReadJSON(&data)
 		if err != nil {
 			return c.Error(http.StatusNotFound, "Error in /read")
 		}
 
-		return c.SendJson(http.StatusOK, map[string]any{
+		return c.SendJSON(http.StatusOK, map[string]any{
 			"nameresp": "Hello " + data.Name,
 			"idresp": data.Id,
 			"emailresp": data.Email,
