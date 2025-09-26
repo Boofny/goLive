@@ -24,10 +24,8 @@ var (
 
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
-//struct that has a mux handler property
 type GoLive struct{
 	Mux *http.ServeMux
-	middleware []func(*Context)
 }
 
 //Method for starting the goLive session
@@ -36,12 +34,9 @@ func New()*GoLive{
 		Mux: http.NewServeMux(),
 	}
 }
-// func (g *GoLive)CORS(c *Context){
-// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-// 	c.Writer.Header().Set("Vary", "Origin")
-// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-// 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+// func (g *GoLive)UseCORS(allowed string){
+// 	g.allowedMiddleware = allowed
 // }
 
 //wanna keep this comment just to know what the custom method represents
@@ -51,10 +46,12 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 	}
 	fullGetPath := fmt.Sprintf("GET %s", path)
   g.Mux.HandleFunc(fullGetPath, func(w http.ResponseWriter, r *http.Request) {
+	// w.Header().Set("Access-Control-Allow-Origin", g.allowedMiddleware)//this work need to make it an option
     // if r.Method != http.MethodGet {
     //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
     //   return
     // }
+		
 
 		ctx := &Context{
 			Writer: w,
@@ -144,6 +141,7 @@ func (g *GoLive)StartServer(port string){
 	server := &http.Server{
 		Addr:    port,
 		Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
+		//TODO reserch middleware chaining and implement in here 
 	}
 
 	icon :=  `
