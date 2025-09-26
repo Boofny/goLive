@@ -18,6 +18,14 @@ type Context struct{
 	Request *http.Request
 }
 
+func (c *Context)GetResponseWriter()http.ResponseWriter{
+	return c.Writer
+}
+
+func (c *Context)GetRequest()*http.Request{
+	return c.Request
+}
+
 //when a request needs json to be send this function is used taking a http status code and any for of data mainly maps
 func (c *Context) SendJSON(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")

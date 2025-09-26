@@ -36,16 +36,12 @@ func New()*GoLive{
 	}
 }
 
-//Use will have to take a paramiter of middeware.CORS() and that should return something http i think
-//also will need to add a custom CORS config kida like e.Use(middeware.CustomCORS(http://exampleurl.com))
-//prob for dev e.Use(middeware.CORS()) will just allow any origin for any request
-
-func (g *GoLive)Use(){  //i think pointer will be needed as i want global middeware
-	//no clue what this param needs to be
-
-	//will need to take the contect function somehow to access the this will need more things like maybe pass a specific port for middeware
-	// c.Writer.Header().Set("Access-Control-Allow-Origin", "*") pass a port here maybe
-	// c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+func (g *GoLive)CORS(c *Context){
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	c.Writer.Header().Set("Vary", "Origin")
+	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 //wanna keep this comment just to know what the custom method represents
