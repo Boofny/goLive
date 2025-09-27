@@ -35,10 +35,6 @@ func New()*GoLive{
 	}
 }
 
-// func (g *GoLive)UseCORS(allowed string){
-// 	g.allowedMiddleware = allowed
-// }
-
 //wanna keep this comment just to know what the custom method represents
 func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) { //get request wrapper for simple usage
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future

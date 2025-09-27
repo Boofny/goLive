@@ -3,6 +3,20 @@ package middleware
 import (
 	"net/http"
 )
+
+type Middleware func(http.Handler) http.Handler
+
+func CreateStack(xs ...Middleware) Middleware {
+	return func(next http.Handler) http.Handler {
+		for i := len(xs) - 1; i >= 0; i-- {
+			x := xs[i]
+			next = x(next)
+		}
+
+		return next
+	}
+}
+
 //
 // type CORSConfig struct {
 // 	AllowOrigins     []string
@@ -47,13 +61,6 @@ import (
 // }
 
 //dont know how wise this is but just to define types would prob be fine
-
-type Context struct {
-  Writer  http.ResponseWriter
-  Request *http.Request
-}
-
-type Middleware func(http.Handler) http.Handler
 
 // func CORS()string{
 // 	return "*"
