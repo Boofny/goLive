@@ -4,6 +4,7 @@ import (
 	// "encoding/json"
 	"errors"
 	"fmt"
+	// "log"
 	"net/http"
 	"os"
 
@@ -26,6 +27,7 @@ type FunctionHandler func(c *Context)error //custom handler defined for error ha
 
 type GoLive struct{
 	Mux *http.ServeMux
+	middlewares []middleware.Middleware
 }
 
 //Method for starting the goLive session
@@ -128,16 +130,24 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
-// type GoLive struct{
-// 	Mux *http.ServeMux
-// }
+func (g *GoLive)Use(mw middleware.Middleware){
+	g.middlewares = append(g.middlewares, mw)
+}
 
 //this function is what starts the server should be put at the end of the main file
 func (g *GoLive)StartServer(port string){
+
+	router := http.Handler(g.Mux)
+	
+	for i := len(g.middlewares) - 1; i >= 0; i-- {
+		router = g.middlewares[i](router)
+		// log.Println(g.middlewares[i])
+	}
+
 	server := &http.Server{
 		Addr:    port,
-		Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
-		//TODO reserch middleware chaining and implement in here 
+		Handler: router, //this is where the output for Requests are
+		// Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
 	icon :=  `

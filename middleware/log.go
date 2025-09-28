@@ -27,28 +27,52 @@ func (w *wrappedWrite) Write(b []byte) (int, error) {
   }
   return w.ResponseWriter.Write(b)
 }
-func Logging(next http.Handler)http.Handler  {
-	redH:= "\033[31m"
-	greenH := "\033[32m"
-	reset := "\033[0m"
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-		start := time.Now()
+func Logger() Middleware{
+	return func (next http.Handler)http.Handler  { //og name is Logging() new name Logger()
+		redH:= "\033[31m"
+		greenH := "\033[32m"
+		reset := "\033[0m"
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+			start := time.Now()
 
-		wrapped := &wrappedWrite{
-			ResponseWriter: w,
-			satusCode: http.StatusOK,
-		}
-		next.ServeHTTP(wrapped, r)
-		code := wrapped.satusCode
-		if code >= 400 && code <= 599{ 
-			fmt.Print("\033[31m >>> \033[0m") //error
-			log.Println(redH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start))
-		}else{
-			fmt.Print("\033[32m >>> \033[0m") //good
-			log.Println(greenH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start)) 
-		}
-	})
+			wrapped := &wrappedWrite{
+				ResponseWriter: w,
+				satusCode: http.StatusOK,
+			}
+			next.ServeHTTP(wrapped, r)
+			code := wrapped.satusCode
+			if code >= 400 && code <= 599{ 
+				fmt.Print("\033[31m >>> \033[0m") //error
+				log.Println(redH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start))
+			}else{
+				fmt.Print("\033[32m >>> \033[0m") //good
+				log.Println(greenH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start)) 
+			}
+		})
+	}
 }
+// func Logger(next http.Handler)http.Handler  { //og name is Logging() new name Logger()
+// 	redH:= "\033[31m"
+// 	greenH := "\033[32m"
+// 	reset := "\033[0m"
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+// 		start := time.Now()
+//
+// 		wrapped := &wrappedWrite{
+// 			ResponseWriter: w,
+// 			satusCode: http.StatusOK,
+// 		}
+// 		next.ServeHTTP(wrapped, r)
+// 		code := wrapped.satusCode
+// 		if code >= 400 && code <= 599{ 
+// 			fmt.Print("\033[31m >>> \033[0m") //error
+// 			log.Println(redH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start))
+// 		}else{
+// 			fmt.Print("\033[32m >>> \033[0m") //good
+// 			log.Println(greenH, wrapped.satusCode, reset, r.Method , r.URL.Path, time.Since(start)) 
+// 		}
+// 	})
+// }
 
 
 
