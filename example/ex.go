@@ -10,8 +10,10 @@ import (
 func main() {
 	e := goLive.New()
 
-	e.Use(middleware.CORS())
-	e.Use(middleware.Logger())
+	e.Use(
+		middleware.CORS(),
+		middleware.Logger(),
+	)
 
 	// example of a get request with ?=
 	e.GET("/hello", func(c *goLive.Context) error {
