@@ -47,10 +47,13 @@ func CORS() Middleware {
 	}
 }
 
+//TODO need to add an option for multi origin
 func CustomCORS(allowedOrigin string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			log.Println("CORS applied")
 			next.ServeHTTP(w, r)
 		})

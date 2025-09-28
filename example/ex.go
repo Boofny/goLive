@@ -4,11 +4,16 @@ import (
 	"net/http"
 
 	"github.com/Boofny/goLive"
+	"github.com/Boofny/goLive/middleware"
 )
 
 func main() {
 	e := goLive.New()
 
+	e.Use(middleware.CORS())
+	e.Use(middleware.Logger())
+
+	// example of a get request with ?=
 	e.GET("/hello", func(c *goLive.Context) error {
 		id := c.QueryGet("name")
 		if id != "David"{
@@ -20,9 +25,9 @@ func main() {
 		return c.SendJSON(http.StatusOK, resp)
 	})
 
+	//example of a get request with path values
 	e.GET("/redi/{name}", func(c *goLive.Context) error {
 		url := "https://github.com/Boofny"
-		// name := c.Request.PathValue("name")
 		name := c.Param("name")
 
 		if name != "devCode"{
@@ -31,7 +36,8 @@ func main() {
 			return c.Redirect(http.StatusFound, url) 
 		}
 	})
-
+	
+	//example of reading json from post request
 	e.POST("/read", func(c *goLive.Context) error {
 
 		type User struct{ //should be from models dir
