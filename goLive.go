@@ -17,6 +17,17 @@ const (
 	PUT = http.MethodPut
 	DELETE = http.MethodDelete
 )
+const (
+	Version = "1"
+	banner =  `
+ ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
+██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
+██║  ███╗██║   ██║██║     ██║██║   ██║█████╗  ██║
+██║   ██║██║   ██║██║     ██║╚██╗ ██╔╝██╔══╝  ╚═╝
+╚██████╔╝╚██████╔╝███████╗██║ ╚████╔╝ ███████╗██╗
+ ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝  ╚══════╝╚═╝ 
+	`    
+)
 
 var (
 	ErrInvalidRedirectCode = errors.New("invalid redirect status code") 
@@ -25,6 +36,7 @@ var (
 
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
+//defined struct for starting server and chaining middleware
 type GoLive struct{
 	Mux *http.ServeMux
 	middlewares []middleware.Middleware
@@ -130,44 +142,28 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
-func (g *GoLive)Use(mw middleware.Middleware){
-	g.middlewares = append(g.middlewares, mw)
+//use passes a variadic value of Middleware that is appended to the g.middlewares slice
+func (g *GoLive)Use(mw ...middleware.Middleware){
+	g.middlewares = append(g.middlewares, mw...)
 }
 
 //this function is what starts the server should be put at the end of the main file
 func (g *GoLive)StartServer(port string){
 
 	router := http.Handler(g.Mux)
-	
+
+	//takes the slice of g.middlewares and chains them into router middleware.Logging(middleware.CORS) etc...
 	for i := len(g.middlewares) - 1; i >= 0; i-- {
 		router = g.middlewares[i](router)
-		// log.Println(g.middlewares[i])
 	}
 
 	server := &http.Server{
 		Addr:    port,
-		Handler: router, //this is where the output for Requests are
+		Handler: router, //where g.Mux is added after middleware chaining 
 		// Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
-	icon :=  `
- ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
-██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
-██║  ███╗██║   ██║██║     ██║██║   ██║█████╗  ██║
-██║   ██║██║   ██║██║     ██║╚██╗ ██╔╝██╔══╝  ╚═╝
-╚██████╔╝╚██████╔╝███████╗██║ ╚████╔╝ ███████╗██╗
- ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═══╝  ╚══════╝╚═╝ 
-	`    
-	blue := "\033[34m"
-	yellow := "\033[33m"
-	reset := "\033[30m"
-	// redH:= "\033[41m"
-	// greenH := "\033[42m"
-	fmt.Println(blue, icon)
-	fmt.Print("\033[34m >>> \033[0m")
-	fmt.Print("Server started successfully on port" +  yellow + port + reset)
-	fmt.Println("\033[34m <<< \033[0m")
-	fmt.Println("--------------------------------------------------")
+	startingDisaply(port)
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
@@ -176,4 +172,15 @@ func (g *GoLive)StartServer(port string){
 			fmt.Println("Error starting server:", err)
 			os.Exit(1)
 	}
+}
+
+func startingDisaply(port string){
+	blue := "\033[34m"
+	yellow := "\033[33m"
+	reset := "\033[30m"
+	fmt.Println(blue, banner)
+	fmt.Print("\033[34m >>> \033[0m")
+	fmt.Print("Server started successfully on port" +  yellow + port + reset)
+	fmt.Println("\033[34m <<< \033[0m")
+	fmt.Println("--------------------------------------------------")
 }
