@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"log"
+	// "log"
 	"net/http"
 	// "strings"
 )
@@ -35,13 +35,14 @@ import (
 // 	}
 // }
 
+// type Middleware func(http.Handler) http.Handler //just to remind what middleware defines
+
 func CORS() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-			log.Println("CORS applied")
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -54,22 +55,23 @@ func CustomCORS(allowedOrigin string) Middleware {
 			w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-			log.Println("CORS applied")
 			next.ServeHTTP(w, r)
 		})
 	}
 }
+
+// func CORSTEST(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		w.Header().Set("Access-Control-Allow-Origin", "*")
+// 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+// 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// 		next.ServeHTTP(w, r)
+// 	})
+// }
 
 // func CheckPermissions(next http.Handler) http.Handler {
 // 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 // 		log.Println("Checking Permissions")
 // 		next.ServeHTTP(w, r)
 // 	})
-// }
-
-// func Default() Middleware {
-// 	return CreateStack(
-// 		Logging,
-// 		AllowCors,
-// 	)
 // }

@@ -18,22 +18,13 @@ type Context struct{
 	Request *http.Request
 }
 
-func (c *Context)GetResponseWriter()http.ResponseWriter{
-	return c.Writer
-}
-
-func (c *Context)GetRequest()*http.Request{
-	return c.Request
-}
-
-//should not be used in contect i belive
-//TODO get rid of the eventually
-// func (c *Context)UseCORS(allowedPath string){ //with thix function will need to make it global some how 
-// 	c.Writer.Header().Set("Access-Control-Allow-Origin", allowedPath)
-// 	c.Writer.Header().Set("Vary", "Origin")
-// 	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-// 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-// 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+//need to see what this is for
+// func (c *Context)GetResponseWriter()http.ResponseWriter{
+// 	return c.Writer
+// }
+//
+// func (c *Context)GetRequest()*http.Request{
+// 	return c.Request
 // }
 
 //when a request needs json to be send this function is used taking a http status code and any for of data mainly maps

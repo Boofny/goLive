@@ -17,9 +17,6 @@ const (
 	PUT = http.MethodPut
 	DELETE = http.MethodDelete
 )
-const (
-	Version = "1"
-)
 
 var (
 	ErrInvalidRedirectCode = errors.New("invalid redirect status code") 
@@ -48,12 +45,6 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 	}
 	fullGetPath := fmt.Sprintf("GET %s", path)
   g.Mux.HandleFunc(fullGetPath, func(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Access-Control-Allow-Origin", g.allowedMiddleware)//this work need to make it an option
-    // if r.Method != http.MethodGet {
-    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    //   return
-    // }
-		
 
 		ctx := &Context{
 			Writer: w,
@@ -67,16 +58,13 @@ func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 		}
   })
 }
+
 func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //put request wrapper
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return
 	}
 	fullPostPath:= fmt.Sprintf("POST %s", path)
   g.Mux.HandleFunc(fullPostPath, func(w http.ResponseWriter, r *http.Request) {
-    // if r.Method != http.MethodPost{
-    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    //   return
-    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -89,16 +77,13 @@ func (g *GoLive)POST(path string, /*mux *http.ServeMux,*/ handle FunctionHandler
 		}
   })
 }
+
 func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //DELETE request wrapper
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return// may need to add this to the others
 	}
 	fullDeletePath := fmt.Sprintf("DELETE %s", path)
   g.Mux.HandleFunc(fullDeletePath, func(w http.ResponseWriter, r *http.Request) {
-    // if r.Method != http.MethodDelete{
-    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    //   return
-    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -111,16 +96,13 @@ func (g *GoLive)DELETE(path string, /*mux *http.ServeMux,*/ handle FunctionHandl
 		}
   })
 }
+
 func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler){ //PUT request wrapper
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return// may need to add this to the others
 	}
 	fullPutPath := fmt.Sprintf("PUT %s", path)
   g.Mux.HandleFunc(fullPutPath, func(w http.ResponseWriter, r *http.Request) {
-    // if r.Method != http.MethodPut{
-    //   http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-    //   return
-    // }
 
 		ctx := &Context{
 			Writer: w,
@@ -142,16 +124,11 @@ func (g *GoLive)Use(mw ...middleware.Middleware){
 //this function is what starts the server should be put at the end of the main file
 func (g *GoLive)StartServer(port string){
 
-	router := http.Handler(g.Mux)
-
-	//takes the slice of g.middlewares and chains them into router middleware.Logging(middleware.CORS) etc...
-	for i := len(g.middlewares) - 1; i >= 0; i-- {
-		router = g.middlewares[i](router)
-	}
+	stack := middleware.CreateStack(g.middlewares...)
 
 	server := &http.Server{
 		Addr:    port,
-		Handler: router, //where g.Mux is added after middleware chaining 
+		Handler: stack(g.Mux), //where g.Mux is added after middleware chaining 
 		// Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
@@ -167,7 +144,6 @@ func (g *GoLive)StartServer(port string){
 }
 
 func startingDisaply(port string){
-
 	banner :=  `
  ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
 ██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
@@ -181,7 +157,7 @@ func startingDisaply(port string){
 	reset := "\033[30m"
 	fmt.Println(blue, banner)
 	fmt.Print("\033[34m >>> \033[0m")
-	fmt.Print("Server started successfully on port" +  yellow + port + reset)
+	fmt.Print("Server started successfully on port " +  yellow + port + reset)
 	fmt.Println("\033[34m <<< \033[0m")
 	fmt.Println("--------------------------------------------------")
 }
