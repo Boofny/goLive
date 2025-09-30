@@ -50,34 +50,41 @@ func (c *Context) ReadJSON(data any) error {
 
 //sends a simple text only string to the client good for fast tests 
 func (c *Context) SendSTRING(status int, data string)error{
-  c.Writer.Header().Set("Content-Type", "text/plain")
+	resp := map[string]string{
+		"response": data,
+	}
+	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
-	// return json.NewEncoder(c.Writer).Encode(data)
-	_, err := c.Writer.Write([]byte(data))
-	return err 
+	err := json.NewEncoder(c.Writer).Encode(resp)
+	return err
 }
 
 //should try and make Valid() and Error sending json
-func (c *Context)Valid(status int)error{
+func (c *Context)Valid(status int, validMsg string)error{
+	resp := map[string]string{
+		"response": validMsg,
+	}
 	if status < 200 || status > 399{
 		return ErrInvalidRedirectCode
 	}
-	c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
-	_, err := c.Writer.Write([]byte("Valid"))
-	// return json.NewEncoder(c.Writer).Encode(data)
+	err := json.NewEncoder(c.Writer).Encode(resp)
 	return err
 }
 
 //sends error into the request for more custom and simple error handling in the http methods
 func (c *Context) Error(status int, errorMsg string) error {
+	// _, err := c.Writer.Write([]byte(errorMsg))
+	resp := map[string]string{
+		"response": errorMsg,
+	}
 	if status < 400 || status > 599{
 		return ErrInvalidRedirectCode
 	}
-	c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
-	_, err := c.Writer.Write([]byte(errorMsg))
-	// return json.NewEncoder(c.Writer).Encode(data)
+	err := json.NewEncoder(c.Writer).Encode(resp)
 	return err
 }
 

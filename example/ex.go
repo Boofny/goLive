@@ -10,7 +10,7 @@ import (
 func main() {
 	e := goLive.New()
 
-	e.Use(
+	e.Chain(
 		middleware.CORS(),
 		middleware.Logger(),
 	)
@@ -42,7 +42,7 @@ func main() {
 	//example of reading json from post request
 	e.POST("/read", func(c *goLive.Context) error {
 
-		type User struct{ //should be from models dir
+		type User struct{ 
 			Name string `json:"name"`
 			Id int `json:"id"`
 			Email string `json:"email"`

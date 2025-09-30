@@ -117,7 +117,7 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
 }
 
 //use passes a variadic value of Middleware that is appended to the g.middlewares slice
-func (g *GoLive)Use(mw ...middleware.Middleware){
+func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
 }
 
