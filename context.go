@@ -1,14 +1,16 @@
 /*
-GoLive http frame work this is the Context file that holds 
+GoLive http frame work this is the Context file that holds
 varias function to send read and detect errors
 most of these ,methods will need a http status code 200 404 etc...
 */
 
+//TODO make error and valid send json make the key for the map the param
 package goLive
 
 import (
 	"encoding/json"
-	"io"
+	"errors"
+	// "io"
 	"net/http"
 )
 
@@ -18,15 +20,6 @@ type Context struct{
 	Request *http.Request
 }
 
-//need to see what this is for
-// func (c *Context)GetResponseWriter()http.ResponseWriter{
-// 	return c.Writer
-// }
-//
-// func (c *Context)GetRequest()*http.Request{
-// 	return c.Request
-// }
-
 //when a request needs json to be send this function is used taking a http status code and any for of data mainly maps
 func (c *Context) SendJSON(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")
@@ -34,17 +27,37 @@ func (c *Context) SendJSON(status int, data any) error {
 	return json.NewEncoder(c.Writer).Encode(data)
 }
 
-//used for when the http method sends a json to the server and need to extract json datad
-//dev must pass the data by address when using in order to bind to the models that are defined
-func (c *Context)ReadJSON(data any)error{
-	body, err := io.ReadAll(c.Request.Body)
-	if err != nil {
-		return err
-	}
+func (c *Context) ReadJSON(data any) error {
 	defer c.Request.Body.Close()
-	return json.Unmarshal(body, data)
+
+	if c.Request.Header.Get("Content-Type") != "application/json" {
+		return errors.New("invalid content type")
+	}
+
+	decoder := json.NewDecoder(c.Request.Body)
+	decoder.DisallowUnknownFields() // optional: prevents extra fields in JSON
+	return decoder.Decode(data)
 }
 
+// func (c *Context)ReadJSON(data any)error{
+// 	body, err := io.ReadAll(c.Request.Body)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer c.Request.Body.Close()
+// 	return json.Unmarshal(body, data)
+// }
+
+//sends a simple text only string to the client good for fast tests 
+func (c *Context) SendSTRING(status int, data string)error{
+  c.Writer.Header().Set("Content-Type", "text/plain")
+	c.Writer.WriteHeader(status)
+	// return json.NewEncoder(c.Writer).Encode(data)
+	_, err := c.Writer.Write([]byte(data))
+	return err 
+}
+
+//should try and make Valid() and Error sending json
 func (c *Context)Valid(status int)error{
 	if status < 200 || status > 399{
 		return ErrInvalidRedirectCode
@@ -52,15 +65,8 @@ func (c *Context)Valid(status int)error{
 	c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte("Valid"))
+	// return json.NewEncoder(c.Writer).Encode(data)
 	return err
-}
-
-//sends a simple text only string to the client good for fast tests 
-func (c *Context) SendSTRING(status int, data string)error{
-  c.Writer.Header().Set("Content-Type", "text/plain")
-	c.Writer.WriteHeader(status)
-	_, err := c.Writer.Write([]byte(data))
-	return err 
 }
 
 //sends error into the request for more custom and simple error handling in the http methods
@@ -71,6 +77,7 @@ func (c *Context) Error(status int, errorMsg string) error {
 	c.Writer.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	c.Writer.WriteHeader(status)
 	_, err := c.Writer.Write([]byte(errorMsg))
+	// return json.NewEncoder(c.Writer).Encode(data)
 	return err
 }
 
@@ -93,7 +100,5 @@ func (c *Context)QueryGet(data string)string{
 	foundQuery := c.Request.URL.Query().Get(data)
 	return foundQuery
 }
-
-
 
 
