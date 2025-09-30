@@ -43,6 +43,12 @@ func CORS() Middleware {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+  		if r.Method == http.MethodOptions {
+				w.WriteHeader(http.StatusOK)
+				return // stop here, don’t call next
+      }
+
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -55,6 +61,12 @@ func CustomCORS(allowedOrigin string) Middleware {
 			w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+  		if r.Method == http.MethodOptions {
+				w.WriteHeader(http.StatusOK)
+				return // stop here, don’t call next
+      }
+
 			next.ServeHTTP(w, r)
 		})
 	}
