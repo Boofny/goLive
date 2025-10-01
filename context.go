@@ -108,4 +108,12 @@ func (c *Context)QueryGet(data string)string{
 	return foundQuery
 }
 
+func (c *Context)ReciveFile(){
+
+}
+
+func (c *Context)SendFile(){
+
+}
+
 
