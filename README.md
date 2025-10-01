@@ -1,10 +1,9 @@
 ## GoLive!
 ### Fast web frame work for golang built on std lib http
-#### Need Golang 1.25.1+
-
 
 ## Installation 
 ### Get started by downloading this module
+#### Need Golang 1.25.1+
 ```bash
 go get github.com/Boofny/goLive@latest
 ```
