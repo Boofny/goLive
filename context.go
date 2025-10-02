@@ -4,7 +4,8 @@ varias function to send read and detect errors
 most of these ,methods will need a http status code 200 404 etc...
 */
 
-//TODO make error and valid send json make the key for the map the param
+//TODO: make error and valid send json make the key for the map the param
+
 package goLive
 
 import (
@@ -108,6 +109,7 @@ func (c *Context)QueryGet(data string)string{
 	return foundQuery
 }
 
+// TODO: need to decide if these functions are part of Context or GoLive struct and how they fit in the framework
 func (c *Context)ReciveFile(){
 
 }

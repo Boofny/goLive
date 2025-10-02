@@ -116,6 +116,11 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
+// TODO: need to make this kind of like host for html files
+func (g *GoLive)Static(){
+
+}
+
 //use passes a variadic value of Middleware that is appended to the g.middlewares slice
 func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
