@@ -4,13 +4,14 @@ varias function to send read and detect errors
 most of these ,methods will need a http status code 200 404 etc...
 */
 
-//TODO: make error and valid send json make the key for the map the param
+// TODO: make error and valid send json make the key for the map the param
 
 package goLive
 
 import (
 	"encoding/json"
 	"errors"
+
 	// "io"
 	"net/http"
 )
@@ -21,7 +22,7 @@ type Context struct{
 	Request *http.Request
 }
 
-//when a request needs json to be send this function is used taking a http status code and any for of data mainly maps
+//when a request needs json to be send this function is used taking a http status code and any form of data mainly maps
 func (c *Context) SendJSON(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
@@ -49,7 +50,7 @@ func (c *Context) ReadJSON(data any) error {
 // 	return json.Unmarshal(body, data)
 // }
 
-//sends a simple text only string to the client good for fast tests 
+//sends a simple text only string to the client good for fast tests json key is "response 
 func (c *Context) SendSTRING(status int, data string)error{
 	resp := map[string]string{
 		"response": data,
@@ -60,7 +61,7 @@ func (c *Context) SendSTRING(status int, data string)error{
 	return err
 }
 
-//should try and make Valid() and Error sending json
+//Sends a json response with custom message json key is "response"
 func (c *Context)Valid(status int, validMsg string)error{
 	resp := map[string]string{
 		"response": validMsg,
@@ -99,11 +100,13 @@ func (c *Context) Redirect(status int, redirectUrl string) error {
 	return nil
 }
 
-func (c *Context)Param(data string)string{ //for now this works with only string
+//gets the value of path url param
+func (c *Context)Param(data string)string{
 	foundData := c.Request.PathValue(data)
 	return foundData
 }
 
+//gets the Query from the url ?=
 func (c *Context)QueryGet(data string)string{
 	foundQuery := c.Request.URL.Query().Get(data)
 	return foundQuery
@@ -114,8 +117,9 @@ func (c *Context)ReciveFile(){
 
 }
 
-func (c *Context)SendFile(){
-
+func (c *Context)SendFile(filepath string)error{
+	http.ServeFile(c.Writer, c.Request, filepath)
+	return nil
 }
 
 

@@ -1,4 +1,4 @@
-//TODO: next functions to work on is EnsureAdmin and Authorization for requests
+// TODO: next functions to work on is EnsureAdmin and Authorization for requests
 package middleware
 
 import (
@@ -55,7 +55,7 @@ func CORS() Middleware {
 	}
 }
 
-//TODO: need to add an option for multi origin
+// TODO: need to add an option for multi origin
 //should prob be an array aka slice that contains multiple origins 
 //can remake this function but with this in mind
 
