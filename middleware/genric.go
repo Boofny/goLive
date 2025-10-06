@@ -4,6 +4,7 @@ package middleware
 import (
 	// "log"
 	"net/http"
+	"strings"
 	// "strings"
 )
 
@@ -38,12 +39,14 @@ import (
 
 // type Middleware func(http.Handler) http.Handler //just to remind what middleware defines
 
+//CORS set to all origins * use only for testing
 func CORS() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+      w.Header().Set("Access-Control-Allow-Credentials", "true")
 
   		if r.Method == http.MethodOptions {
 				w.WriteHeader(http.StatusOK)
@@ -55,19 +58,33 @@ func CORS() Middleware {
 	}
 }
 
-// TODO: need to add an option for multi origin
+//TODO: need to add an option for multi origin
 //should prob be an array aka slice that contains multiple origins 
 //can remake this function but with this in mind
 
-func CustomCORS(allowedOrigin string) Middleware {
+func CustomCORS(allowedOrigins []string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			origin := r.Header.Get("Origin")
+			allowed := false 
+
+			for _, v := range allowedOrigins {
+				if strings.EqualFold(v, origin){
+					allowed = true
+					break
+				}
+			}
+
+			if allowed{
+ 				w.Header().Set("Access-Control-Allow-Origin", origin)
+        w.Header().Set("Vary", "Origin")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        w.Header().Set("Access-Control-Allow-Credentials", "true")
+			}
 
   		if r.Method == http.MethodOptions {
-				w.WriteHeader(http.StatusOK)
+				w.WriteHeader(http.StatusNoContent)
 				return // stop here, don’t call next
       }
 
@@ -75,15 +92,6 @@ func CustomCORS(allowedOrigin string) Middleware {
 		})
 	}
 }
-
-// func CORSTEST(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		w.Header().Set("Access-Control-Allow-Origin", "*")
-// 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-// 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-// 		next.ServeHTTP(w, r)
-// 	})
-// }
 
 // func CheckPermissions(next http.Handler) http.Handler {
 // 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

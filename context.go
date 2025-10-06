@@ -11,6 +11,7 @@ package goLive
 import (
 	"encoding/json"
 	"errors"
+	"os"
 
 	// "io"
 	"net/http"
@@ -112,12 +113,16 @@ func (c *Context)QueryGet(data string)string{
 	return foundQuery
 }
 
-// TODO: need to decide if these functions are part of Context or GoLive struct and how they fit in the framework
 func (c *Context)ReciveFile(){
-
+	// TODO: read name
 }
 
+// FIX: need more tweaking not working as intened
 func (c *Context)SendFile(filepath string)error{
+	if _, err := os.Stat(filepath); os.IsNotExist(err) {
+		http.Error(c.Writer, "File not found", http.StatusNotFound)
+		return err
+	}
 	http.ServeFile(c.Writer, c.Request, filepath)
 	return nil
 }

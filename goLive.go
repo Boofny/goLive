@@ -114,26 +114,28 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
-// TODO: need to make this kind of like host for static files / dirs
-func (g *GoLive)ServeStatic(filePath, rootPath string){
-
-}
-
-// NOTE: this is good for now just serving a file content pics txt etc
-func (g *GoLive)ServeFile(urlPath, filepath string)error{
+//To serve a static file html txt png etc
+func (g *GoLive)ServeStatic(urlPath, filepath string)error{
 	_, err := os.Stat(filepath)
 	if os.IsNotExist(err){
 		return fmt.Errorf("File does not exist %s", filepath)
 	}
 
   g.Mux.HandleFunc(urlPath, func(w http.ResponseWriter, r *http.Request) {
-		//only allow get and head 
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 				http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 				return
 		}
 		http.ServeFile(w, r, filepath)
   })
+	return nil
+}
+
+//To serve an entire dir
+func (g *GoLive)ServeDir(urlPath, dirPath string)error{
+	fs := http.FileServer(http.Dir(dirPath))
+	g.Mux.Handle(urlPath, http.StripPrefix(urlPath, fs))
+
 	return nil
 }
 
