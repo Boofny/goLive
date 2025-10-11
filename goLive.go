@@ -30,7 +30,7 @@ type GoLive struct{
 }
 
 //Method for starting the goLive session
-func New()*GoLive{ 
+func Live()*GoLive{ 
 	return &GoLive{
 		Mux: http.NewServeMux(),
 	}
@@ -142,6 +142,10 @@ func (g *GoLive)ServeDir(urlPath, dirPath string)error{
 //use passes a variadic value of Middleware that is appended to the g.middlewares slice
 func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
+}
+
+func (g *GoLive)GroupRoutes(urlPath string){
+	//this will need route groiping and middlewares chainging
 }
 
 //this function is what starts the server should be put at the end of the main file
