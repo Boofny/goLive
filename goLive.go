@@ -144,7 +144,7 @@ func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
 }
 
-func (g *GoLive)GroupRoutes(urlPath string){
+func (g *GoLive)GroupRoutes(urlPath string, m ...middleware.Middleware){
 	//this will need route groiping and middlewares chainging
 }
 
