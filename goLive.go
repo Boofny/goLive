@@ -30,7 +30,7 @@ type GoLive struct{
 }
 
 //Method for starting the goLive session
-func Live()*GoLive{ 
+func Launch()*GoLive{ 
 	return &GoLive{
 		Mux: http.NewServeMux(),
 	}
