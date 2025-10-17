@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	e := goLive.New()
+	e := goLive.Launch()
 
 	e.Chain(
         middleware.CORS(),
