@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	e := goLive.New()
+	e := goLive.Launch()
 
 	e.Chain(
 		middleware.CORS(),
@@ -60,6 +60,12 @@ func main() {
 			"emailresp": data.Email,
 		})
 
+	})
+
+	v1 := e.GroupRoutes("/v1")
+
+	v1.GET("/ping", func(c *goLive.Context) error {
+		return c.SendSTRING(http.StatusOK, "pong v1")
 	})
 
 	e.StartServer(":8080")

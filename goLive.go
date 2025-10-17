@@ -144,8 +144,17 @@ func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
 }
 
-func (g *GoLive)GroupRoutes(urlPath string, m ...middleware.Middleware){
-	//this will need route groiping and middlewares chainging
+
+// NOTE: for now this just uses the main routes middleware
+func (g *GoLive)GroupRoutes(prefix string) *GoLive{
+
+	sub := &GoLive{
+		Mux: http.NewServeMux(),
+	}
+
+	g.Mux.Handle(prefix+"/", http.StripPrefix(prefix, sub.Mux))
+
+	return sub
 }
 
 //this function is what starts the server should be put at the end of the main file
