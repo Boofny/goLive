@@ -8,6 +8,7 @@
 go get github.com/Boofny/goLive@latest
 ```
 
+### Simple Example
 ```go
 package main
 
