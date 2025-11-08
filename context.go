@@ -12,24 +12,23 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
-
-	// "io"
 	"net/http"
 )
 
-//custom Context struct to have http types tied to methods rather than passed to functions
+//Context custom struct to have http types tied to methods rather than passed to functions
 type Context struct{
 	Writer http.ResponseWriter
 	Request *http.Request
 }
 
-//when a request needs json to be send this function is used taking a http status code and any form of data mainly maps
+// SendJSON used for sending map/json data
 func (c *Context) SendJSON(status int, data any) error {
 	c.Writer.Header().Set("Content-Type", "application/json")
 	c.Writer.WriteHeader(status)
 	return json.NewEncoder(c.Writer).Encode(data)
 }
 
+// ReadJSON reads json
 func (c *Context) ReadJSON(data any) error {
 	defer c.Request.Body.Close()
 
@@ -42,16 +41,20 @@ func (c *Context) ReadJSON(data any) error {
 	return decoder.Decode(data)
 }
 
-// func (c *Context)ReadJSON(data any)error{
-// 	body, err := io.ReadAll(c.Request.Body)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	defer c.Request.Body.Close()
-// 	return json.Unmarshal(body, data)
-// }
+// ReadForm is used to read forms Request ie "username=David"
+func (c *Context) ReadForm(data string) ( string ){
+ err := c.Request.ParseForm()
+	if err != nil {
+		http.Error(c.Writer, "Bad form data", http.StatusBadRequest)
+		return "Error" 
+	}
 
-//sends a simple text only string to the client good for fast tests json key is "response 
+	resp := c.Request.FormValue(data)
+
+	return resp 
+}
+
+//SendSTRING sends a simple text only string to the client good for fast tests json key is "response 
 func (c *Context) SendSTRING(status int, data string)error{
 	resp := map[string]string{
 		"response": data,
@@ -62,7 +65,7 @@ func (c *Context) SendSTRING(status int, data string)error{
 	return err
 }
 
-//Sends a json response with custom message json key is "response"
+//Valid Sends a json response with custom message json key is "response"
 func (c *Context)Valid(status int, validMsg string)error{
 	resp := map[string]string{
 		"response": validMsg,
@@ -76,7 +79,7 @@ func (c *Context)Valid(status int, validMsg string)error{
 	return err
 }
 
-//sends error into the request for more custom and simple error handling in the http methods
+//Error sends error into the request for more custom and simple error handling in the http methods
 func (c *Context) Error(status int, errorMsg string) error {
 	// _, err := c.Writer.Write([]byte(errorMsg))
 	resp := map[string]string{
@@ -91,23 +94,23 @@ func (c *Context) Error(status int, errorMsg string) error {
 	return err
 }
 
-//redirects the clients request to the needed url or other path
-func (c *Context) Redirect(status int, redirectUrl string) error {
+//Redirect redirects the clients request to the needed url or other path
+func (c *Context) Redirect(status int, redirectURL string) error {
 	if status < 300 || status > 308 {
 		return ErrInvalidRedirectCode
 	}
-	http.Redirect(c.Writer, c.Request, redirectUrl, status)
+	http.Redirect(c.Writer, c.Request, redirectURL, status)
 	c.Writer.WriteHeader(status)
 	return nil
 }
 
-//gets the value of path url param
+//Param gets the value of path url param
 func (c *Context)Param(data string)string{
 	foundData := c.Request.PathValue(data)
 	return foundData
 }
 
-//gets the Query from the url ?=
+//QueryGet gets the Query from the url ?=
 func (c *Context)QueryGet(data string)string{
 	foundQuery := c.Request.URL.Query().Get(data)
 	return foundQuery
@@ -117,7 +120,7 @@ func (c *Context)ReciveFile(){
 	// TODO: read name
 }
 
-// FIX: need more tweaking not working as intened
+// SendFile FIX: need more tweaking not working as intened
 func (c *Context)SendFile(filepath string)error{
 	if _, err := os.Stat(filepath); os.IsNotExist(err) {
 		http.Error(c.Writer, "File not found", http.StatusNotFound)
