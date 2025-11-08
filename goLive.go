@@ -1,3 +1,4 @@
+// TODO: need to find out how to change all these package names from goLive to golive
 package goLive
 
 import (
@@ -23,20 +24,19 @@ var (
 
 type FunctionHandler func(c *Context)error //custom handler defined for error handling
 
-//defined struct for starting server and chaining middleware
+//GoLive dfined struct for starting server and chaining middleware
 type GoLive struct{
 	Mux *http.ServeMux
 	middlewares []middleware.Middleware
 }
 
-//Method for starting the goLive session
+//Launch Method for starting the goLive session
 func Launch()*GoLive{ 
 	return &GoLive{
 		Mux: http.NewServeMux(),
 	}
 }
 
-//wanna keep this comment just to know what the custom method represents
 func (g *GoLive) GET(path string, /*mux *http.ServeMux,*/ handle FunctionHandler) { //get request wrapper for simple usage
 	if path == "/favicon.ico" { //just ignore this will prob redirect in future
   	return
@@ -114,11 +114,11 @@ func (g *GoLive)PUT(path string, /*mux *http.ServeMux,*/ handle FunctionHandler)
   })
 }
 
-//To serve a static file html txt png etc
+//ServeStatic To serve a static file html txt png etc
 func (g *GoLive)ServeStatic(urlPath, filepath string)error{
 	_, err := os.Stat(filepath)
 	if os.IsNotExist(err){
-		return fmt.Errorf("File does not exist %s", filepath)
+		return fmt.Errorf("file does not exist %s", filepath)
 	}
 
   g.Mux.HandleFunc(urlPath, func(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +131,7 @@ func (g *GoLive)ServeStatic(urlPath, filepath string)error{
 	return nil
 }
 
-//To serve an entire dir
+//ServeDir To serve an entire dir
 func (g *GoLive)ServeDir(urlPath, dirPath string)error{
 	fs := http.FileServer(http.Dir(dirPath))
 	g.Mux.Handle(urlPath, http.StripPrefix(urlPath, fs))
@@ -139,7 +139,7 @@ func (g *GoLive)ServeDir(urlPath, dirPath string)error{
 	return nil
 }
 
-//use passes a variadic value of Middleware that is appended to the g.middlewares slice
+//Chain use passes a variadic value of Middleware that is appended to the g.middlewares slice
 func (g *GoLive)Chain(mw ...middleware.Middleware){
 	g.middlewares = append(g.middlewares, mw...)
 }
@@ -157,7 +157,7 @@ func (g *GoLive)GroupRoutes(prefix string) *GoLive{
 	return sub
 }
 
-//this function is what starts the server should be put at the end of the main file
+//StartServer starts server with wrapped middleware and takes port ex: 8080
 func (g *GoLive)StartServer(port string){
 
 	stack := middleware.CreateStack(g.middlewares...)
