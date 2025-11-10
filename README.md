@@ -21,13 +21,10 @@ import (
 func main() {
 	e := goLive.Launch()
 
-	e.Chain(
-        middleware.CORS(),
-        middleware.Logger(),
-	)
+	e.Chain(middleware.CORS())
 
-	e.GET("/hello", func(c *goLive.Context)error{
-		return c.SendSTRING(http.StatusOK, "Hello World") //send out your data
+	e.GET("/ping", func(c *goLive.Context)error{
+		return c.SendSTRING(http.StatusOK, "pong") //send out your data
 	})
 
 	e.StartServer(":8080")
