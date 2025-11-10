@@ -62,6 +62,17 @@ func CORS() Middleware {
 //should prob be an array aka slice that contains multiple origins 
 //can remake this function but with this in mind
 
+	// e.Use(middleware.Recover())
+	//
+	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	// 	AllowOrigins:     []string{"https://*", "http://*"},
+	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+	// 	AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+	// 	AllowCredentials: true,
+	// 	MaxAge:           300,
+	// }))
+
+// CustomCORS allows as custom cors besides * origin
 func CustomCORS(allowedOrigins []string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -79,6 +90,7 @@ func CustomCORS(allowedOrigins []string) Middleware {
  				w.Header().Set("Access-Control-Allow-Origin", origin)
         w.Header().Set("Vary", "Origin")
         w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
         w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
         w.Header().Set("Access-Control-Allow-Credentials", "true")
 			}

@@ -11,7 +11,7 @@ func main() {
 	e := goLive.Launch()
 
 	e.Chain(
-		middleware.CORS(),
+		middleware.CustomCORS(AllowOrigins []string{"*"}),
 		middleware.Logger(),
 	)
 
