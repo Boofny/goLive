@@ -141,6 +141,7 @@ func (g *GoLive)ServeDir(urlPath, dirPath string)error{
 
 //Chain use passes a variadic value of Middleware that is appended to the g.middlewares slice
 func (g *GoLive)Chain(mw ...middleware.Middleware){
+	g.middlewares = append(g.middlewares, middleware.Logger)
 	g.middlewares = append(g.middlewares, mw...)
 }
 
@@ -165,6 +166,7 @@ func (g *GoLive)StartServer(port string){
 	server := &http.Server{
 		Addr:    port,
 		Handler: stack(g.Mux), //where g.Mux is added after middleware chaining 
+		// Handler: middleware.Logger(g.Mux), //where g.Mux is added after middleware chaining 
 		// Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
