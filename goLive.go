@@ -141,7 +141,7 @@ func (g *GoLive)ServeDir(urlPath, dirPath string)error{
 
 //Chain use passes a variadic value of Middleware that is appended to the g.middlewares slice
 func (g *GoLive)Chain(mw ...middleware.Middleware){
-	g.middlewares = append(g.middlewares, middleware.Logger)
+	// g.middlewares = append(g.middlewares, middleware.Logger)
 	g.middlewares = append(g.middlewares, mw...)
 }
 
