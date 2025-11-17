@@ -170,7 +170,7 @@ func (g *GoLive)StartServer(port string){
 		// Handler: middleware.Logging(g.Mux), //this is where the output for Requests are
 	}
 
-	startingDisaply(port)
+	StartingDisaply(port)
 
 	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
@@ -181,7 +181,8 @@ func (g *GoLive)StartServer(port string){
 	}
 }
 
-func startingDisaply(port string){
+// StartingDisaply is now global so it can be used out side of golive
+func StartingDisaply(port string){
 	banner :=  `
  ██████╗  ██████╗ ██╗     ██╗██╗   ██╗███████╗██╗
 ██╔════╝ ██╔═══██╗██║     ██║██║   ██║██╔════╝██║
